@@ -20,7 +20,13 @@ use \App\Http\Controllers\DashboardController;
 //});
 Route::get('/',[AuthController::class,'loginForm'])->name('login.form');
 Route::get('registration/form',[AuthController::class,'registrationForm'])->name('registration.form');
-Route::prefix('admin')->group(function(){
-    Route::get('/',[DashboardController::class,'index'])->name('dashboard');
+Route::post('registration/store',[AuthController::class,'store'])->name('registration.form.store');
+Route::post('submit/login',[AuthController::class,'login'])->name('login.submit');
 
+Route::group(['middleware' => 'admin'] ,function(){
+    Route::prefix('admins')->group(function(){
+        Route::get('/',[DashboardController::class,'index'])->name('dashboard');
+        Route::get('logout',[AuthController::class,'logout'])->name('logout');
+    });
 });
+
