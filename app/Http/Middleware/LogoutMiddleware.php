@@ -6,7 +6,7 @@ use Closure;
 use Sentinel;
 use Illuminate\Http\Request;
 
-class ManagerMiddleware
+class LogoutMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,13 +17,16 @@ class ManagerMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Sentinel::check() && Sentinel::getUser()->roles()->first()->slug == 'manager') {
+        if (!Sentinel::check()) {
             return $next($request);
-        }elseif (Sentinel::check() && Sentinel::getUser()->roles()->first()->slug == 'admin'){
-            return $next($request);
-        }else{
-            return redirect()->route('login.form');
         }
-        return redirect()->route('dashboard');
+        if (Sentinel::check()->user_type == 'admin') {
+            return redirect()->route('dashboard');
+        }elseif (Sentinel::check()->user_type == 'manager') {
+            return redirect()->route('dashboard');
+        }else{
+            return redirect()->route('dashboard');
+        }
+
     }
 }
